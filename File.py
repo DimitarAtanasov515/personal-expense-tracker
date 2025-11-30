@@ -1,6 +1,7 @@
 import csv
 import os
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 CSV_FILE = "expenses.csv"
 CATEGORIES = ["Food", "Transport", "Bills", "Entertainment", "Other"]
@@ -54,17 +55,35 @@ def show_summary():
     for cat, amt in by_category.items():
         percent = (amt / total) * 100 if total > 0 else 0
         print(f"  {cat}: {amt:.2f} ({percent:.0f}%)")
+    
+    if by_category:
+        categories = list(by_category.keys())
+        amounts = list(by_category.values())
+        plt.figure(figsize=(6,6))
+        plt.pie(amounts, labels=categories, autopct='%1.0f%%', startangle=90)
+        plt.title("Expenses by Category")
+        plt.show()
+
+def delete_all_data():
+    if os.path.exists(CSV_FILE):
+        os.remove(CSV_FILE)
+        init_csv()
+        print("All expenses deleted!")
+    else:
+        print("No data to delete.")
 
 def main():
     init_csv()
     while True:
-        print("\nOptions: [1] Add expense [2] Show summary [3] Exit")
+        print("\nOptions: [1] Add expense [2] Show summary [3] Delete all data [4] Exit")
         choice = input("Choose: ").strip()
         if choice == "1":
             add_expense()
         elif choice == "2":
             show_summary()
         elif choice == "3":
+            delete_all_data()
+        elif choice == "4":
             print("Bye!")
             break
         else:
